@@ -1,6 +1,4 @@
 ---
-title: "APAN5300 Final project"
-author: "Group 4 Section 4"
 date: "2020/10/22"
 output:
   html_document: default
