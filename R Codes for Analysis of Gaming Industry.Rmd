@@ -1,0 +1,336 @@
+---
+title: "APAN5300 Final project"
+author: "Group 4 Section 4"
+date: "2020/10/22"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#Research question 1
+```{r}
+library(pwr)
+library(Rmisc)
+library(dplyr)
+library(dplyr)
+save_p<-length(1000)
+meanA<-length(1000)
+meanB<-length(1000)
+meanC<-length(1000)
+CIU<-length(1000)
+CIL<-length(1000)
+
+pwr.anova.test(f=0.35,p=0.9,k=3)
+set.seed(1)
+for(i in 1:1000){
+  groups <- rep(c("PS","XBOX","Wii"), each=36)
+  DV <- c(rnorm(36,10,2),   # means for group A
+          rnorm(36,10.5,1),   # means for group B
+          rnorm(36,10.3,1.5)    # means for group C
+  )
+  sim_df<-data.frame(groups,DV)
+  
+  aov_results <- summary(aov(DV~groups, sim_df))
+  save_p[i]<-aov_results[[1]]$`Pr(>F)`[1]
+  meanA[i]<-sim_df%>% filter(groups == "PS")%>%summarize(mean(DV))
+  meanB[i]<-sim_df%>% filter(groups == "XBOX")%>% summarize(mean(DV))
+  meanC[i]<-sim_df%>% filter(groups == "Wii")%>% summarize(mean(DV))
+  CIU[i]<-as.numeric(CI(DV)[1])
+  CIL[i]<-as.numeric(CI(DV)[3])
+  
+}
+mean(unlist(meanA))
+mean(unlist(meanB))
+mean(unlist(meanC))
+mean(CIU)
+mean(CIL)
+mean(save_p)
+length(save_p[save_p>0.05])/1000
+pwr.anova.test(f=0.35,n=36,k=3)
+
+
+```
+
+#Research question 2
+```{r}
+library(dplyr)
+save_p<-length(1000)
+meanA<-length(1000)
+meanB<-length(1000)
+meanC<-length(1000)
+CIU<-length(1000)
+CIL<-length(1000)
+diff_wii_PS<-length(1000)
+diff_XBOX_PS<-length(1000)
+diff_XBOX_Wii<-length(1000)
+p.adf_Wii_PS<-length(1000)
+p.adf_XBOX_PS<-length(1000)
+p.adf_XBOX_Wii<-length(1000)
+CIU_1<-length(1000)
+CIU_2<-length(1000)
+CIU_3<-length(1000)
+CIL_1<-length(1000)
+CIL_2<-length(1000)
+CIL_3<-length(1000)
+
+pwr.anova.test(f=0.35,p=0.9,k=3)
+set.seed(1)
+for(i in 1:1000){
+  groups <- rep(c("PS","XBOX","Wii"), each=36)
+  DV <- c(rnorm(36,10,2),   # means for group A
+          rnorm(36,13,1),   # means for group B
+          rnorm(36,11.5,1.5)    # means for group C
+  )
+  sim_df<-data.frame(groups,DV)
+  
+  aov_results <- summary(aov(DV~groups, sim_df))
+  TukeyHSD(aov(DV~groups, sim_df))
+
+  m1<-aov(DV~groups, sim_df)
+  THSD<-TukeyHSD(m1, "groups", ordered = TRUE)
+  diff_wii_PS[i]<-THSD$groups[,1][1]
+  diff_XBOX_PS[i]<-THSD$groups[,1][2]
+  diff_XBOX_Wii[i]<-THSD$groups[,1][3]
+  CIU_1[i]<-THSD$groups[,3][1]
+  CIU_2[i]<-THSD$groups[,3][2]
+  CIU_3[i]<-THSD$groups[,3][3]
+  
+  CIL_1[i]<-THSD$groups[,2][1]
+  CIL_2[i]<-THSD$groups[,2][2]
+  CIL_3[i] <-THSD$groups[,2][3]
+  
+  p.adf_Wii_PS[i]<-THSD$groups[,4][1]
+  p.adf_XBOX_PS[i]<-THSD$groups[,4][2]
+  p.adf_XBOX_Wii[i]<-THSD$groups[,4][3]
+  
+  
+  save_p[i]<-aov_results[[1]]$`Pr(>F)`[1]
+  meanA[i]<-sim_df%>% filter(groups == "PS")%>%summarize(mean(DV))
+  meanB[i]<-sim_df%>% filter(groups == "XBOX")%>% summarize(mean(DV))
+  meanC[i]<-sim_df%>% filter(groups == "Wii")%>% summarize(mean(DV))
+  CIU[i]<-as.numeric(CI(DV)[1])
+  CIL[i]<-as.numeric(CI(DV)[3])
+  
+}
+
+mean(unlist(meanA))
+mean(unlist(meanB))
+mean(unlist(meanC))
+mean(CIU)
+mean(CIL)
+mean(save_p)
+mean(diff_wii_PS)
+mean(diff_XBOX_PS)
+mean(diff_XBOX_Wii)
+mean(p.adf_Wii_PS)
+mean(p.adf_XBOX_PS)
+mean(p.adf_XBOX_Wii)
+mean(CIU_1)
+mean(CIU_2)
+mean(CIU_3)
+mean(CIL_1)
+mean(CIL_2)
+mean(CIL_3)
+
+length(save_p[save_p<0.05])/1000
+pwr.anova.test(f=0.35,n=36,k=3)
+
+```
+
+#Research question 3
+```{r}
+library(pwr)
+library(Rmisc)
+library(dplyr)
+library(dplyr)
+save_p<-length(1000)
+meanA<-length(1000)
+meanB<-length(1000)
+meanC<-length(1000)
+CIU<-length(1000)
+CIL<-length(1000)
+
+pwr.anova.test(f=0.35,p=0.9,k=3)
+set.seed(1)
+for(i in 1:1000){
+  groups <- rep(c("NA","EU","JAP"), each=36)
+  DV <- c(rnorm(36,5,2),   # means for group A
+          rnorm(36,5.5,1),   # means for group B
+          rnorm(36,5.2,1.5)    # means for group C
+  )
+  sim_df<-data.frame(groups,DV)
+  
+  aov_results <- summary(aov(DV~groups, sim_df))
+  save_p[i]<-aov_results[[1]]$`Pr(>F)`[1]
+  meanA[i]<-sim_df%>% filter(groups == "NA")%>%summarize(mean(DV))
+  meanB[i]<-sim_df%>% filter(groups == "EU")%>% summarize(mean(DV))
+  meanC[i]<-sim_df%>% filter(groups == "JAP")%>% summarize(mean(DV))
+  CIU[i]<-as.numeric(CI(DV)[1])
+  CIL[i]<-as.numeric(CI(DV)[3])
+  
+}
+mean(unlist(meanA))
+mean(unlist(meanB))
+mean(unlist(meanC))
+mean(CIU)
+mean(CIL)
+mean(save_p)
+length(save_p[save_p>0.05])/1000
+pwr.anova.test(f=0.35,n=36,k=3)
+
+```
+
+#Research question 4
+```{r}
+library(dplyr)
+save_p<-length(1000)
+meanA<-length(1000)
+meanB<-length(1000)
+meanC<-length(1000)
+diff_NA_JAP<-length(1000)
+diff_EU_JAP<-length(1000)
+diff_EU_NA<-length(1000)
+p.adf_NA_JAP<-length(1000)
+p.adf_EU_JAP<-length(1000)
+p.adf_EU_NA<-length(1000)
+CIU<-length(1000)
+CIL<-length(1000)
+CIU_1<-length(1000)
+CIU_2<-length(1000)
+CIU_3<-length(1000)
+CIL_1<-length(1000)
+CIL_2<-length(1000)
+CIL_3<-length(1000)
+
+pwr.anova.test(f=0.35,p=0.9,k=3)
+set.seed(1)
+for(i in 1:1000){
+  groups <- rep(c("NA","EU","JAP"), each=36)
+  DV <- c(rnorm(36,5,2),   # means for group A
+          rnorm(36,7,1),   # means for group B
+          rnorm(36,3,1.5)    # means for group C
+  )
+  sim_df<-data.frame(groups,DV)
+  
+  aov_results <- summary(aov(DV~groups, sim_df))
+
+  m1<-aov(DV~groups, sim_df)
+  THSD<-TukeyHSD(m1, "groups", ordered = TRUE)
+  diff_NA_JAP[i]<-THSD$groups[,1][1]
+  diff_EU_JAP[i]<-THSD$groups[,1][2]
+  diff_EU_NA[i]<-THSD$groups[,1][3]
+  
+  p.adf_NA_JAP[i]<-THSD$groups[,4][1]
+  p.adf_EU_JAP[i]<-THSD$groups[,4][2]
+  p.adf_EU_NA[i]<-THSD$groups[,4][3]
+  CIU_1[i]<-THSD$groups[,3][1]
+  CIU_2[i]<-THSD$groups[,3][2]
+  CIU_3[i]<-THSD$groups[,3][3]
+  
+  CIL_1[i]<-THSD$groups[,2][1]
+  CIL_2[i]<-THSD$groups[,2][2]
+  CIL_3[i] <-THSD$groups[,2][3]
+  
+  save_p[i]<-aov_results[[1]]$`Pr(>F)`[1]
+  meanA[i]<-sim_df%>% filter(groups == "NA")%>%summarize(mean(DV))
+  meanB[i]<-sim_df%>% filter(groups == "EU")%>% summarize(mean(DV))
+  meanC[i]<-sim_df%>% filter(groups == "JAP")%>% summarize(mean(DV))
+  CIU[i]<-as.numeric(CI(DV)[1])
+  CIL[i]<-as.numeric(CI(DV)[3])
+  
+}
+
+mean(unlist(meanA))
+mean(unlist(meanB))
+mean(unlist(meanC))
+mean(CIU)
+mean(CIL)
+mean(save_p)
+mean(diff_NA_JAP)
+mean(diff_EU_JAP)
+mean(diff_EU_NA)
+mean(p.adf_NA_JAP)
+mean(p.adf_EU_JAP)
+mean(p.adf_EU_NA)
+mean(CIU_1)
+mean(CIU_2)
+mean(CIU_3)
+mean(CIL_1)
+mean(CIL_2)
+mean(CIL_3)
+
+length(save_p[save_p<0.05])/1000
+pwr.anova.test(f=0.35,n=36,k=3)
+```
+
+
+#Research question 5
+```{r}
+library(dplyr)
+save_ps<-length(1000)
+meanA<-length(1000)
+meanB<-length(1000)
+CIU<-length(1000)
+CIL<-length(1000)
+
+pwr.t.test(d= 0.5,power=0.9,type = c("two.sample"),alternative = c("greater"))
+set.seed(1)
+for(i in 1:1000){
+  group_A <- rnorm(70,75,5)
+  group_B <- rnorm(70,73,10)
+  t_results <- t.test(group_A,group_B,var.equal = TRUE)
+  save_ps[i] <- t_results$p.value
+  meanA[i]<-mean(group_A)
+  meanB[i]<-mean(group_B)
+  DV<-c(group_A,group_B)
+  CIU[i]<-as.numeric(CI(DV)[1])
+  CIL[i]<-as.numeric(CI(DV)[3])
+  
+}
+mean(meanA)
+mean(meanB)
+mean(CIU)
+mean(CIL)
+mean(save_ps)
+length(save_p[save_ps>0.05])/1000
+pwr.t.test(d= 0.5,n=70,type = c("two.sample"),alternative = c("greater"))
+
+```
+
+#Research question 6
+```{r}
+library(dplyr)
+save_ps<-length(1000)
+meanA<-length(1000)
+meanB<-length(1000)
+CIU<-length(1000)
+CIL<-length(1000)
+
+pwr.t.test(d= 0.5,power=0.9,type = c("two.sample"),alternative = c("greater"))
+set.seed(1)
+for(i in 1:1000){
+  group_A <- rnorm(70,75,5)
+  group_B <- rnorm(70,70,10)
+  t_results <- t.test(group_A,group_B,var.equal = TRUE)
+  save_ps[i] <- t_results$p.value
+  meanA[i]<-mean(group_A)
+  meanB[i]<-mean(group_B)
+  DV<-c(group_A,group_B)
+  CIU[i]<-as.numeric(CI(DV)[1])
+  CIL[i]<-as.numeric(CI(DV)[3])
+  
+}
+mean(meanA)
+mean(meanB)
+mean(CIU)
+mean(CIL)
+mean(save_ps)
+length(save_p[save_ps<0.05])/1000
+pwr.t.test(d= 0.5,n=70,type = c("two.sample"),alternative = c("greater"))
+
+```
